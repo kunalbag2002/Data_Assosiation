@@ -6,13 +6,7 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const multerconfig= require('./config/multerconfig');
-const mongoose = require('mongoose');
-require('dotenv').config();
 
-// MongoDB Atlas connection
-mongoose.connect(process.env.MONGO_URL)
-  .then(() => console.log("✅ Connected to MongoDB Atlas"))
-  .catch(err => console.error("❌ MongoDB connection error:", err));
 
 app.set('view engine', 'ejs');
 app.use(express.json());
