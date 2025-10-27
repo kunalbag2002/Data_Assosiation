@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const postSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user'
+        ref: 'User'
     },
     date: {
         type: Date,
@@ -15,7 +15,7 @@ const postSchema = mongoose.Schema({
         required: true  // optional, but good for validation
     },
     likes: [
-        { type: mongoose.Schema.Types.ObjectId, ref: 'user' }
+        { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
     ]
 
 });

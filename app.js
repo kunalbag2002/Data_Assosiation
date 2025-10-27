@@ -1,11 +1,19 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const app = express();
+require('dotenv').config();
 const userModel = require('./models/user');
 const postModel = require('./models/post');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const multerconfig= require('./config/multerconfig');
+const multerconfig = require('./config/multerconfig');
+
+// MongoDB Connection
+
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log("Connected to MongoDB Atlas successfully"))
+    .catch(err => console.log("MongoDB connection error:", err));
 
 app.set('view engine', 'ejs');
 app.use(express.json());
@@ -81,7 +89,7 @@ app.post('/register', async (req, res) => {
     const { email, name, username, age, password } = req.body;
 
     const user = await userModel.findOne({ email });
-    if (user) return res.status(400).send('User already exists');
+    if (user) return res.status(400).redirect('/profile');
 
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(password, salt, async (err, hash) => {
@@ -95,7 +103,7 @@ app.post('/register', async (req, res) => {
 
             let token = jwt.sign({ email: email, userId: user._id }, "secretkey"); //secretkey is used to create token
             res.cookie('token', token);
-            res.send("User registered successfully");
+            res.redirect('/profile');
         });
     });
 });
@@ -104,7 +112,7 @@ app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     let user = await userModel.findOne({ email });
-    if (!user) return res.status(404).send('Something went wrong');
+    if (!user) return res.status(404).redirect("/");
 
     bcrypt.compare(password, user.password, function (err, result) {
         if (result) {
